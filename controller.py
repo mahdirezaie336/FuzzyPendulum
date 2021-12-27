@@ -12,21 +12,30 @@ class FuzzyController:
     def __init__(self, fcl_path):
         self.system = Reader().load_from_file(fcl_path)
 
-
     def _make_input(self, world):
         return dict(
-            cp = world.x,
-            cv = world.v,
-            pa = degrees(world.theta),
-            pv = degrees(world.omega)
+            cp=world.x,
+            cv=world.v,
+            pa=degrees(world.theta),
+            pv=degrees(world.omega)
         )
-
 
     def _make_output(self):
         return dict(
-            force = 0.
+            force=0.
         )
 
+    def fuzzify(self):
+        pass
+
+    def inference(self):
+        pass
+
+    def defuzzify(self):
+        pass
+
+    def calculate(self):
+        pass
 
     def decide(self, world):
         output = self._make_output()
