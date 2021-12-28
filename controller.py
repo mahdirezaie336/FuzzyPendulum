@@ -50,7 +50,17 @@ class FuzzyController:
         for key, value in self.fuzzy_sets['pv']:
             pv_memberships[key] = self.get_membership(value, pv)
 
-        return pa_memberships, pv_memberships
+        cp = inputs['cp']
+        cp_memberships = {}
+        for key, value in self.fuzzy_sets['cp']:
+            cp_memberships[key] = self.get_membership(value, cp)
+
+        cv = inputs['cv']
+        cv_memberships = {}
+        for key, value in self.fuzzy_sets['cv']:
+            cv_memberships[key] = self.get_membership(value, cv)
+
+        return pa_memberships, pv_memberships, cp_memberships, cv_memberships
 
     def inference(self):
         pass
