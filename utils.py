@@ -37,8 +37,8 @@ def read_rules():
             condition_list.append(ands)
 
         result_list = []
+        result = result[:-1]
         for literal in result.split(' IS '):
-            literal = literal[:-1]
             if literal[0] == '(' or literal[0] == ')':
                 literal = literal[1:]
             if literal[-1] == '(' or literal[-1] == ')':
@@ -74,7 +74,7 @@ def load_fuzzy_sets():
                 'ccw_fast': [(100, 0), (200, 1)],
             },
 
-            'forc': {
+            'force': {
                 'left_fast': [(-100, 0), (-80, 1), (-60, 0)],
                 'left_slow': [(-80, 0), (-60, 1), (0, 0)],
                 'stop': [(-60, 0), (0, 1), (60, 0)],
