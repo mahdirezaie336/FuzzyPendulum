@@ -5,6 +5,7 @@ from math import degrees
 
 # pyfuzzy imports
 from fuzzy.storage.fcl.Reader import Reader
+from utils import read_rules
 
 
 class FuzzyController:
@@ -33,6 +34,8 @@ class FuzzyController:
                 'ccw_fast': [(100, 0), (200, 1)],
             }
         }
+
+        self.rules = read_rules()
 
     def _make_input(self, world):
         return dict(
@@ -68,6 +71,8 @@ class FuzzyController:
         pv_memberships = {}
         for key, value in self.fuzzy_sets['pv']:
             pv_memberships[key] = self.get_membership(value, pv)
+
+        return pa_memberships, pv_memberships
 
     def inference(self):
         pass
