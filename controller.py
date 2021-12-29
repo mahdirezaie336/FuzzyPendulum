@@ -79,11 +79,14 @@ class FuzzyController:
             res_set = rule_dict['THEN'][1]
             if res_var not in result_fuzzy_vars:
                 result_fuzzy_vars[res_var] = {}
-            result_fuzzy_vars[res_var][res_set] = max(result_fuzzy_vars[res_var].get(res_set, 0), power)
+                for subset in self.fuzzy_sets[res_var]:
+                    result_fuzzy_vars[res_var][subset] = 0.0
+            result_fuzzy_vars[res_var][res_set] = max(result_fuzzy_vars[res_var], power)
         return result_fuzzy_vars
 
-    def defuzzify(self, output):
-
+    def defuzzify(self, fuzzy_result):
+        for var, var_dict in fuzzy_result:
+            
         return {}
 
     def calculate(self, inputs):

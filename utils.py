@@ -98,3 +98,26 @@ def load_fuzzy_sets():
                 'right_fast': [(60, 0), (80, 1), (100, 0)],
             }
         }
+
+
+def get_centroid(points):
+    shapes = []     # (Area, center)
+    for i, point in enumerate(points):
+        if i == 0:
+            continue
+        xp = points[i-1][0]
+        dp = points[i-1][1]
+        x = point[0]
+        d = point[1]
+        # Each part of shape is a kind of trapezoid containing one triangle and one rectangle
+        shapes.append((dp * (x - xp), float(x + xp) / 2))
+        shapes.append((float(d - dp) * (x - xp) / 2, float(2 * x + xp) / 3))
+
+    print shapes
+    sum_of_areas = 0
+    accumulator = 0
+    for shape in shapes:
+        accumulator += shape[0] * shape[1]
+        sum_of_areas += shape[0]
+
+    return accumulator / sum_of_areas
