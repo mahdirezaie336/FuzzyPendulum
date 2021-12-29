@@ -83,15 +83,16 @@ class FuzzyController:
         return result_fuzzy_vars
 
     def defuzzify(self, output):
-        pass
 
-    def calculate(self, inputs, output):
-        self.fuzzify(inputs)
-        self.inference()
-        self.defuzzify(output)
+        return {}
+
+    def calculate(self, inputs):
+        fuzzy_values = self.fuzzify(inputs)
+        fuzzy_result = self.inference(fuzzy_values)
+        return self.defuzzify(fuzzy_result)
 
     def decide(self, world):
-        output = self._make_output()
-        self.system.calculate(self._make_input(world), output)
-        self.calculate(self._make_input(world), output)
+        # output = self._make_output()
+        # self.system.calculate(self._make_input(world), output)
+        output = self.calculate(self._make_input(world))
         return output['force']
