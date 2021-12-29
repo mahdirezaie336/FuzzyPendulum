@@ -60,10 +60,27 @@ class FuzzyController:
         for key, value in self.fuzzy_sets['cv']:
             cv_memberships[key] = self.get_membership(value, cv)
 
-        return pa_memberships, pv_memberships, cp_memberships, cv_memberships
+        r = {'pa': pa_memberships, 'pv': pv_memberships, 'cp': cp_memberships, 'cv': cv_memberships}
+        return r
 
-    def inference(self):
-        pass
+    def inference(self, fuzzy_values):
+        result_fuzzy_vars = {}
+        for rule_name, rule_dict in self.rules:
+            power = 0
+            for or_condition in rule_dict['IF']:
+                min_membership = 1
+                for and_condition in or_condition:
+                    var_name = and_condition[0]
+                    var_value = and_condition[1]
+                    min_membership = min(min_membership, fuzzy_values[var_name][var_value])
+                power = max(power, min_membership)
+
+            res_var = rule_dict['THEN'][0]
+            res_set = rule_dict['THEN'][1]
+            if res_var not in result_fuzzy_vars:
+                result_fuzzy_vars[res_var] = {}
+            result_fuzzy_vars[res_var][res_set] = max(result_fuzzy_vars[res_var].get(res_set, 0), power)
+        return result_fuzzy_vars
 
     def defuzzify(self, output):
         pass
