@@ -84,54 +84,15 @@ class FuzzyController:
     def defuzzify(self, fuzzy_result):
         result = {}
         for var in fuzzy_result:
-            var_dict = fuzzy_result[var]
-
-            if var not in result:
-                result[var] = {}
-
-            for subset_name in self.fuzzy_sets[var]:
-                subset_points = self.fuzzy_sets[var][subset_name]
-
-                if subset_name not in result[var]:
-                    result[var][subset_name] = []
-
-                max_value = fuzzy_result[var][subset_name]
-                if max_value == 0:
-                    continue
-                for i, point in enumerate(subset_points):
-                    x = point[0]
-                    d = point[1]
-
-                    # Split a point into multiple points
-                    if d > max_value != 0:
-                        if i == 0:
-                            new_x = get_x_of(max_value, point, subset_points[1])
-                            result[var][subset_name].append((x, max_value))
-                            result[var][subset_name].append((new_x, max_value))
-                        elif i == len(subset_points) - 1:
-                            new_x = get_x_of(max_value, subset_points[-2], point)
-                            result[var][subset_name].append((x, max_value))
-                            result[var][subset_name].append((new_x, max_value))
-                        else:
-                            new_x1 = get_x_of(max_value, point, subset_points[i+1])
-                            new_x2 = get_x_of(max_value, subset_points[i-1], point)
-                            result[var][subset_name].append((new_x1, max_value))
-                            result[var][subset_name].append((new_x2, max_value))
-                    else:
-                        result[var][subset_name].append(point)
-
-        result_of_results = {}
-        for var in result:
-            var_dict = result[var]
             all_points = []
             for subset_name in get_subset_names(var):
-                all_points.extend(var_dict[subset_name])
-
+                subset_points = self.fuzzy_sets[var][subset_name]
+                max_value = fuzzy_result[var][subset_name]
+                all_points.extend(cut_points(subset_points, max_value))
             all_points = mix_points(all_points)
-            centroid = get_centroid(all_points)
-            result_of_results[var] = centroid
+            result[var] = get_centroid(all_points)
 
-        return result_of_results
+        return result
 
     def calculate(self, inputs):
         fuzzy_values = self.fuzzify(inputs)

@@ -187,3 +187,34 @@ def mix_points(points):
             new_points.append(point)
 
     return new_points
+
+
+def cut_points(points, max_value):
+    new_points = []
+    if max_value == 0:
+        return []
+    for i, point in enumerate(points):
+        x = point[0]
+        d = point[1]
+
+        if d > max_value:
+            if i == 0:
+                new_x = get_x_of(max_value, point, points[1])
+                new_points.append((x, max_value))
+                new_points.append((new_x, max_value))
+            elif i == len(points) - 1:
+                new_x = get_x_of(max_value, points[-2], point)
+                new_points.append((x, max_value))
+                new_points.append((new_x, max_value))
+            else:
+                new_x1 = get_x_of(max_value, point, points[i + 1])
+                new_x2 = get_x_of(max_value, points[i - 1], point)
+                new_points.append((new_x2, max_value))
+                new_points.append((new_x1, max_value))
+        else:
+            new_points.append(point)
+
+    return new_points
+
+
+print cut_points([(0, 0), (1, 1), (2, 0)], 0.5)
