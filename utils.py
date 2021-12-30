@@ -113,7 +113,6 @@ def get_centroid(points):
         shapes.append((dp * (x - xp), float(x + xp) / 2))
         shapes.append((float(d - dp) * (x - xp) / 2, float(2 * x + xp) / 3))
 
-    print shapes
     sum_of_areas = 0
     accumulator = 0
     for shape in shapes:
@@ -121,3 +120,48 @@ def get_centroid(points):
         sum_of_areas += shape[0]
 
     return accumulator / sum_of_areas
+
+
+def get_x_of(y, point1, point2):
+    # y = ax + b
+    a, b = get_line(point1, point2)
+    return (y - b) / a
+
+
+def get_y_of(x, point1, point2):
+    # y = ax + b
+    a, b = get_line(point1, point2)
+    return a * x + b
+
+
+def get_line(point1, point2):
+    x1, y1 = point1
+    x2, y2 = point2
+    slope = float(y2 - y1) / float(x2 - x1)
+    bias = y1 - slope * x1
+    return slope, bias
+
+
+def mix_points(points):
+    new_points = []
+    for i, point in enumerate(points):
+        if i == 0 or i == len(points) - 1:
+            new_points.append(point)
+            continue
+
+        prev_point = points[i-1]
+        # If current point is behind previous point
+        if point[0] < prev_point[0]:
+            a, b = get_line(prev_point, points[i-2])
+            c, d = get_line(point, points[i+1])
+            new_x = (d - b) / (a - c)
+            new_y = get_y_of(new_x, point, points[i+1])
+            del new_points[-1]
+            new_points.append((new_x, new_y))
+        else:
+            new_points.append(point)
+
+    return new_points
+
+
+print mix_points([(0, 0), (1, 1), (2, 0), (1, 0), (2, 1), (3, 0)])

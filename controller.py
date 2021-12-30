@@ -5,7 +5,7 @@ from math import degrees
 
 # pyfuzzy imports
 from fuzzy.storage.fcl.Reader import Reader
-from utils import read_rules, load_fuzzy_sets
+from utils import read_rules, load_fuzzy_sets, get_x_of
 
 
 class FuzzyController:
@@ -35,7 +35,7 @@ class FuzzyController:
             x, d = item
             xp, dp = points[i - 1]
             if xp <= value <= x:
-                return dp + (dp - d) / (xp - x) * (value - xp)
+                return dp + float(dp - d) / (xp - x) * (value - xp)
         return 0.0
 
     def fuzzify(self, inputs):
@@ -85,9 +85,40 @@ class FuzzyController:
         return result_fuzzy_vars
 
     def defuzzify(self, fuzzy_result):
+        result = {}
         for var, var_dict in fuzzy_result:
-            
-        return {}
+
+            if var not in result:
+                result[var] = {}
+
+            for subset_name, subset_points in self.fuzzy_sets[var]:
+
+                if subset_name not in result[var]:
+                    result[var][subset_name] = []
+
+                max_value = fuzzy_result[var][subset_name]
+                for i, point in enumerate(subset_points):
+                    x = point[0]
+                    d = point[1]
+
+                    # Split a point into multiple points
+                    if d > max_value:
+                        if i == 0:
+                            new_x = get_x_of(max_value, point, subset_points[1])
+                            result[var][subset_name].append((x, max_value))
+                            result[var][subset_name].append((new_x, max_value))
+                        elif i == len(subset_points) - 1:
+                            new_x = get_x_of(max_value, subset_points[-2], point)
+                            result[var][subset_name].append((x, max_value))
+                            result[var][subset_name].append((new_x, max_value))
+                        else:
+                            new_x1 = get_x_of(max_value, point, subset_points[i+1])
+                            new_x2 = get_x_of(max_value, subset_points[i-1], point)
+                            result[var][subset_name].append((new_x1, max_value))
+                            result[var][subset_name].append((new_x2, max_value))
+                    else:
+                        result[var][subset_name].append(point)
+        return result
 
     def calculate(self, inputs):
         fuzzy_values = self.fuzzify(inputs)
@@ -95,7 +126,7 @@ class FuzzyController:
         return self.defuzzify(fuzzy_result)
 
     def decide(self, world):
-        # output = self._make_output()
-        # self.system.calculate(self._make_input(world), output)
-        output = self.calculate(self._make_input(world))
+        output = self._make_output()
+        self.system.calculate(self._make_input(world), output)
+        # output = self.calculate(self._make_input(world))
         return output['force']
