@@ -215,6 +215,3 @@ def cut_points(points, max_value):
             new_points.append(point)
 
     return new_points
-
-
-print cut_points([(0, 0), (1, 1), (2, 0)], 0.5)

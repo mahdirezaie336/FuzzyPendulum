@@ -31,32 +31,16 @@ class FuzzyController:
 
     def fuzzify(self, inputs):
         # Calculating membership of current pa value in the fuzzy sets defined for pa
-        pa = inputs['pa'] % 360
-        pa_memberships = {}
-        for key in self.fuzzy_sets['pa']:
-            value = self.fuzzy_sets['pa'][key]
-            pa_memberships[key] = get_value_from_points(value, pa)
+        result = {}
+        for var in ['pa', 'pv', 'cp', 'cv']:
+            var_value = inputs[var]
+            var_dict = {}
+            for key in self.fuzzy_sets[var]:
+                value = self.fuzzy_sets[var][key]
+                var_dict[key] = get_value_from_points(value, var_value)
+            result[var] = var_dict
 
-        pv = inputs['pv']
-        pv_memberships = {}
-        for key in self.fuzzy_sets['pv']:
-            value = self.fuzzy_sets['pv'][key]
-            pv_memberships[key] = get_value_from_points(value, pv)
-
-        cp = inputs['cp']
-        cp_memberships = {}
-        for key in self.fuzzy_sets['cp']:
-            value = self.fuzzy_sets['cp'][key]
-            cp_memberships[key] = get_value_from_points(value, cp)
-
-        cv = inputs['cv']
-        cv_memberships = {}
-        for key in self.fuzzy_sets['cv']:
-            value = self.fuzzy_sets['cv'][key]
-            cv_memberships[key] = get_value_from_points(value, cv)
-
-        r = {'pa': pa_memberships, 'pv': pv_memberships, 'cp': cp_memberships, 'cv': cv_memberships}
-        return r
+        return result
 
     def inference(self, fuzzy_values):
         result_fuzzy_vars = {}
