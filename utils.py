@@ -53,60 +53,72 @@ def read_rules():
 
 def load_fuzzy_sets():
     return {
-            'pa': {
-                'up_more_right': [(0, 0), (30, 1), (60, 0)],
-                'up_right': [(30, 0), (60, 1), (90, 0)],
-                'up': [(60, 0), (90, 1), (120, 0)],
-                'up_left': [(90, 0), (120, 1), (150, 0)],
-                'up_more_left': [(120, 0), (150, 1), (180, 0)],
-                'down_more_left': [(180, 0), (210, 1), (240, 0)],
-                'down_left': [(210, 0), (240, 1), (270, 0)],
-                'down': [(240, 0), (270, 1), (300, 0)],
-                'down_right': [(270, 0), (300, 1), (330, 0)],
-                'down_more_right': [(300, 0), (330, 1), (360, 0)]
-            },
+        'pa': {
+            'up_more_right': [(0, 1), (30, 1), (60, 0)],
+            'up_right': [(30, 0), (60, 1), (90, 0)],
+            'up': [(60, 0), (90, 1), (120, 0)],
+            'up_left': [(90, 0), (120, 1), (150, 0)],
+            'up_more_left': [(120, 0), (150, 1), (180, 0)],
+            'down_more_left': [(180, 0), (210, 1), (240, 0)],
+            'down_left': [(210, 0), (240, 1), (270, 0)],
+            'down': [(240, 0), (270, 1), (300, 0)],
+            'down_right': [(270, 0), (300, 1), (330, 0)],
+            'down_more_right': [(300, 0), (330, 1), (360, 0)]
+        },
 
-            'pv': {
-                'cw_fast': [(-200, 1), (-100, 0)],
-                'cw_slow': [(-200, 0), (-100, 1), (0, 0)],
-                'stop': [(-100, 0), (0, 1), (100, 0)],
-                'ccw_slow': [(0, 0), (100, 1), (200, 0)],
-                'ccw_fast': [(100, 0), (200, 1)],
-            },
+        'pv': {
+            'cw_fast': [(-200, 1), (-100, 0)],
+            'cw_slow': [(-200, 0), (-100, 1), (0, 0)],
+            'stop': [(-100, 0), (0, 1), (100, 0)],
+            'ccw_slow': [(0, 0), (100, 1), (200, 0)],
+            'ccw_fast': [(100, 0), (200, 1)],
+        },
 
-            'force': {
-                'left_fast': [(-100, 0), (-80, 1), (-60, 0)],
-                'left_slow': [(-80, 0), (-60, 1), (0, 0)],
-                'stop': [(-60, 0), (0, 1), (60, 0)],
-                'right_slow': [(0, 0), (60, 1), (80, 0)],
-                'right_fast': [(60, 0), (80, 1), (100, 0)],
-            },
+        'force': {
+            'left_fast': [(-100, 0), (-80, 1), (-60, 0)],
+            'left_slow': [(-80, 0), (-60, 1), (0, 0)],
+            'stop': [(-60, 0), (0, 1), (60, 0)],
+            'right_slow': [(0, 0), (60, 1), (80, 0)],
+            'right_fast': [(60, 0), (80, 1), (100, 0)],
+        },
 
-            'cp': {
-                'left_far': [(-10, 1), (-5, 0)],
-                'left_near': [(-10, 0), (-2.5, 1), (0, 0)],
-                'stop': [(-2.5, 0), (0, 1), (2.5, 0)],
-                'right_near': [(0, 0), (2.5, 1), (10, 0)],
-                'right_far': [(5, 0), (10, 1)],
-            },
+        'cp': {
+            'left_far': [(-10, 1), (-5, 0)],
+            'left_near': [(-10, 0), (-2.5, 1), (0, 0)],
+            'stop': [(-2.5, 0), (0, 1), (2.5, 0)],
+            'right_near': [(0, 0), (2.5, 1), (10, 0)],
+            'right_far': [(5, 0), (10, 1)],
+        },
 
-            'cv': {
-                'left_fast': [(-5, 1), (-2.5, 0)],
-                'left_slow': [(-80, 0), (-60, 1), (0, 0)],
-                'stop': [(-60, 0), (0, 1), (60, 0)],
-                'right_slow': [(0, 0), (60, 1), (80, 0)],
-                'right_fast': [(60, 0), (80, 1), (100, 0)],
-            }
+        'cv': {
+            'left_fast': [(-5, 1), (-2.5, 0)],
+            'left_slow': [(-80, 0), (-60, 1), (0, 0)],
+            'stop': [(-60, 0), (0, 1), (60, 0)],
+            'right_slow': [(0, 0), (60, 1), (80, 0)],
+            'right_fast': [(60, 0), (80, 1), (100, 0)],
         }
+    }
+
+
+def get_subset_names(var):
+    subsets = {
+        'pa': ['up_more_right', 'up_right', 'up', 'up_left', 'up_more_left', 'down_more_left', 'down_left', 'down',
+               'down_right', 'down_more_right'],
+        'pv': ['cw_fast', 'cw_slow', 'stop', 'ccw_slow', 'ccw_fast'],
+        'force': ['left_fast', 'left_slow', 'stop', 'right_slow', 'right_fast'],
+        'cp': ['left_far', 'left_near', 'stop', 'right_near', 'right_far'],
+        'cv': ['left_fast', 'left_slow', 'stop', 'right_slow', 'right_fast']
+        }
+    return subsets[var]
 
 
 def get_centroid(points):
-    shapes = []     # (Area, center)
+    shapes = []  # (Area, center)
     for i, point in enumerate(points):
         if i == 0:
             continue
-        xp = points[i-1][0]
-        dp = points[i-1][1]
+        xp = points[i - 1][0]
+        dp = points[i - 1][1]
         x = point[0]
         d = point[1]
         # Each part of shape is a kind of trapezoid containing one triangle and one rectangle
@@ -119,6 +131,8 @@ def get_centroid(points):
         accumulator += shape[0] * shape[1]
         sum_of_areas += shape[0]
 
+    if sum_of_areas == 0:
+        return 0
     return accumulator / sum_of_areas
 
 
@@ -142,6 +156,17 @@ def get_line(point1, point2):
     return slope, bias
 
 
+def get_value_from_points(points, value):
+    for i, point in enumerate(points):
+        if i == 0:
+            continue
+        x, d = point
+        xp, dp = points[i - 1]
+        if xp <= value < x:
+            return get_y_of(value, point, points[i - 1])
+    return 0.0
+
+
 def mix_points(points):
     new_points = []
     for i, point in enumerate(points):
@@ -149,13 +174,13 @@ def mix_points(points):
             new_points.append(point)
             continue
 
-        prev_point = points[i-1]
+        prev_point = points[i - 1]
         # If current point is behind previous point
         if point[0] < prev_point[0]:
-            a, b = get_line(prev_point, points[i-2])
-            c, d = get_line(point, points[i+1])
+            a, b = get_line(prev_point, points[i - 2])
+            c, d = get_line(point, points[i + 1])
             new_x = (d - b) / (a - c)
-            new_y = get_y_of(new_x, point, points[i+1])
+            new_y = get_y_of(new_x, point, points[i + 1])
             del new_points[-1]
             new_points.append((new_x, new_y))
         else:

@@ -9,7 +9,7 @@ class World:
     def __init__(self,
                  M = 80.        , m = 16.       , l = 1.,
                  x = 0.         , v = 0.        , a = 0.,
-                 theta = 0.     , omega = 0.1    , alpha = 0.,
+                 theta = 0.     , omega = 0.    , alpha = 0.,
                  g = 9.8        , b = .1        , I = .006,
                  min_x = -10.   , max_x = 10.,
                  force = 0.):

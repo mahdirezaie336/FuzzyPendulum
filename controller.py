@@ -29,41 +29,31 @@ class FuzzyController:
             force=0.
         )
 
-    def get_membership(self, points, value):
-        for i, item in enumerate(points):
-            if i == 0:
-                continue
-            x, d = item
-            xp, dp = points[i - 1]
-            if xp <= value <= x:
-                return dp + float(dp - d) / (xp - x) * (value - xp)
-        return 0.0
-
     def fuzzify(self, inputs):
         # Calculating membership of current pa value in the fuzzy sets defined for pa
-        pa = inputs['pa']
+        pa = inputs['pa'] % 360
         pa_memberships = {}
         for key in self.fuzzy_sets['pa']:
             value = self.fuzzy_sets['pa'][key]
-            pa_memberships[key] = self.get_membership(value, pa)
+            pa_memberships[key] = get_value_from_points(value, pa)
 
         pv = inputs['pv']
         pv_memberships = {}
         for key in self.fuzzy_sets['pv']:
             value = self.fuzzy_sets['pv'][key]
-            pv_memberships[key] = self.get_membership(value, pv)
+            pv_memberships[key] = get_value_from_points(value, pv)
 
         cp = inputs['cp']
         cp_memberships = {}
         for key in self.fuzzy_sets['cp']:
             value = self.fuzzy_sets['cp'][key]
-            cp_memberships[key] = self.get_membership(value, cp)
+            cp_memberships[key] = get_value_from_points(value, cp)
 
         cv = inputs['cv']
         cv_memberships = {}
         for key in self.fuzzy_sets['cv']:
             value = self.fuzzy_sets['cv'][key]
-            cv_memberships[key] = self.get_membership(value, cv)
+            cv_memberships[key] = get_value_from_points(value, cv)
 
         r = {'pa': pa_memberships, 'pv': pv_memberships, 'cp': cp_memberships, 'cv': cv_memberships}
         return r
@@ -106,7 +96,8 @@ class FuzzyController:
                     result[var][subset_name] = []
 
                 max_value = fuzzy_result[var][subset_name]
-                print max_value
+                if max_value == 0:
+                    continue
                 for i, point in enumerate(subset_points):
                     x = point[0]
                     d = point[1]
@@ -132,23 +123,9 @@ class FuzzyController:
         result_of_results = {}
         for var in result:
             var_dict = result[var]
-            list_of_lists = []
-            while len(var_dict) != 0:
-                minimum_set = []
-                minimum_point = float('inf')
-                minimum_name = ''
-                for subset_name in var_dict:
-                    subset_points = var_dict[subset_name]
-                    if minimum_point > subset_points[0][0]:
-                        minimum_point = subset_points[0][0]
-                        minimum_set = subset_points
-                        minimum_name = subset_name
-                list_of_lists.append(minimum_set)
-                del var_dict[minimum_name]
-
             all_points = []
-            for points_list in list_of_lists:
-                all_points.extend(points_list)
+            for subset_name in get_subset_names(var):
+                all_points.extend(var_dict[subset_name])
 
             all_points = mix_points(all_points)
             centroid = get_centroid(all_points)
@@ -164,6 +141,8 @@ class FuzzyController:
     def decide(self, world):
         # output = self._make_output()
         # self.system.calculate(self._make_input(world), output)
+        # print self._make_input(world)
+        # time.sleep(10)
         output = self.calculate(self._make_input(world))
         return output['force']
 
