@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # python imports
+import time
 from math import degrees
 
 # pyfuzzy imports
@@ -86,7 +87,8 @@ class FuzzyController:
                 result_fuzzy_vars[res_var] = {}
                 for subset in self.fuzzy_sets[res_var]:
                     result_fuzzy_vars[res_var][subset] = 0.0
-            result_fuzzy_vars[res_var][res_set] = max(result_fuzzy_vars[res_var], power)
+            result_fuzzy_vars[res_var][res_set] = max(result_fuzzy_vars[res_var][res_set], power)
+
         return result_fuzzy_vars
 
     def defuzzify(self, fuzzy_result):
@@ -104,12 +106,13 @@ class FuzzyController:
                     result[var][subset_name] = []
 
                 max_value = fuzzy_result[var][subset_name]
+                print max_value
                 for i, point in enumerate(subset_points):
                     x = point[0]
                     d = point[1]
 
                     # Split a point into multiple points
-                    if d > max_value:
+                    if d > max_value != 0:
                         if i == 0:
                             new_x = get_x_of(max_value, point, subset_points[1])
                             result[var][subset_name].append((x, max_value))
