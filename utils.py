@@ -162,6 +162,3 @@ def mix_points(points):
             new_points.append(point)
 
     return new_points
-
-
-print mix_points([(0, 0), (1, 1), (2, 0), (1, 0), (2, 1), (3, 0)])

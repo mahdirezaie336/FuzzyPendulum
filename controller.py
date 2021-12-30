@@ -5,7 +5,7 @@ from math import degrees
 
 # pyfuzzy imports
 from fuzzy.storage.fcl.Reader import Reader
-from utils import read_rules, load_fuzzy_sets, get_x_of
+from utils import *
 
 
 class FuzzyController:
@@ -42,22 +42,26 @@ class FuzzyController:
         # Calculating membership of current pa value in the fuzzy sets defined for pa
         pa = inputs['pa']
         pa_memberships = {}
-        for key, value in self.fuzzy_sets['pa']:
+        for key in self.fuzzy_sets['pa']:
+            value = self.fuzzy_sets['pa'][key]
             pa_memberships[key] = self.get_membership(value, pa)
 
         pv = inputs['pv']
         pv_memberships = {}
-        for key, value in self.fuzzy_sets['pv']:
+        for key in self.fuzzy_sets['pv']:
+            value = self.fuzzy_sets['pv'][key]
             pv_memberships[key] = self.get_membership(value, pv)
 
         cp = inputs['cp']
         cp_memberships = {}
-        for key, value in self.fuzzy_sets['cp']:
+        for key in self.fuzzy_sets['cp']:
+            value = self.fuzzy_sets['cp'][key]
             cp_memberships[key] = self.get_membership(value, cp)
 
         cv = inputs['cv']
         cv_memberships = {}
-        for key, value in self.fuzzy_sets['cv']:
+        for key in self.fuzzy_sets['cv']:
+            value = self.fuzzy_sets['cv'][key]
             cv_memberships[key] = self.get_membership(value, cv)
 
         r = {'pa': pa_memberships, 'pv': pv_memberships, 'cp': cp_memberships, 'cv': cv_memberships}
@@ -65,7 +69,8 @@ class FuzzyController:
 
     def inference(self, fuzzy_values):
         result_fuzzy_vars = {}
-        for rule_name, rule_dict in self.rules:
+        for rule_name in self.rules:
+            rule_dict = self.rules[rule_name]
             power = 0
             for or_condition in rule_dict['IF']:
                 min_membership = 1
@@ -86,12 +91,14 @@ class FuzzyController:
 
     def defuzzify(self, fuzzy_result):
         result = {}
-        for var, var_dict in fuzzy_result:
+        for var in fuzzy_result:
+            var_dict = fuzzy_result[var]
 
             if var not in result:
                 result[var] = {}
 
-            for subset_name, subset_points in self.fuzzy_sets[var]:
+            for subset_name in self.fuzzy_sets[var]:
+                subset_points = self.fuzzy_sets[var][subset_name]
 
                 if subset_name not in result[var]:
                     result[var][subset_name] = []
@@ -118,7 +125,33 @@ class FuzzyController:
                             result[var][subset_name].append((new_x2, max_value))
                     else:
                         result[var][subset_name].append(point)
-        return result
+
+        result_of_results = {}
+        for var in result:
+            var_dict = result[var]
+            list_of_lists = []
+            while len(var_dict) != 0:
+                minimum_set = []
+                minimum_point = float('inf')
+                minimum_name = ''
+                for subset_name in var_dict:
+                    subset_points = var_dict[subset_name]
+                    if minimum_point > subset_points[0][0]:
+                        minimum_point = subset_points[0][0]
+                        minimum_set = subset_points
+                        minimum_name = subset_name
+                list_of_lists.append(minimum_set)
+                del var_dict[minimum_name]
+
+            all_points = []
+            for points_list in list_of_lists:
+                all_points.extend(points_list)
+
+            all_points = mix_points(all_points)
+            centroid = get_centroid(all_points)
+            result_of_results[var] = centroid
+
+        return result_of_results
 
     def calculate(self, inputs):
         fuzzy_values = self.fuzzify(inputs)
@@ -126,7 +159,8 @@ class FuzzyController:
         return self.defuzzify(fuzzy_result)
 
     def decide(self, world):
-        output = self._make_output()
-        self.system.calculate(self._make_input(world), output)
-        # output = self.calculate(self._make_input(world))
+        # output = self._make_output()
+        # self.system.calculate(self._make_input(world), output)
+        output = self.calculate(self._make_input(world))
         return output['force']
+
