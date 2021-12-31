@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
 # python imports
-import time
 from math import degrees
 
 # pyfuzzy imports
 from fuzzy.storage.fcl.Reader import Reader
 from utils import *
-import matplotlib.pyplot as plt
 
 
 class FuzzyController:
@@ -90,4 +88,3 @@ class FuzzyController:
         # self.system.calculate(self._make_input(world), output)
         output = self.calculate(self._make_input(world))
         return 2 * output['force']
-

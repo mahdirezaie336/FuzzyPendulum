@@ -3,6 +3,8 @@ FUNCTION_BLOCK InvertedPendulum
 	VAR_INPUT
 		pa : REAL; (* description='pendulum angle', min=0, max=360, unit='degrees' *)
 		pv : REAL; (* description='pendulum angular velocity', min=-200, max=200, unit='degrees per second' *)
+		cp : REAL; (* description='cart position', min=-10, max=10, unit='meter' *)
+		cv : REAL; (* description='cart velocity', min=-5, max=5, unit='meter per second' *)
 	END_VAR
 
 	VAR_OUTPUT
@@ -29,6 +31,22 @@ FUNCTION_BLOCK InvertedPendulum
 		TERM stop := (-100, 0) (0, 1) (100, 0);
 		TERM ccw_slow := (0, 0) (100, 1) (200, 0);
 		TERM ccw_fast := (100, 0) (200, 1);
+	END_FUZZIFY
+
+	FUZZIFY cp
+		TERM left_far := (-10, 1) (-5, 0);
+		TERM left_near := (-10, 0) (-2.5, 1) (0, 0);
+		TERM stop := (-2.5, 0) (0, 1) (2.5, 0);
+		TERM right_near := (0, 0) (2.5, 1) (10, 0);
+		TERM right_far := (5, 0) (10, 1);
+	END_FUZZIFY
+
+	FUZZIFY cv
+		TERM left_fast := (-5, 1) (-2.5, 0);
+		TERM left_slow := (-5, 0) (-1, 1) (0, 0);
+		TERM stop := (-1, 0) (0, 1) (1, 0);
+		TERM right_slow := (0, 0) (1, 1) (5, 0);
+		TERM right_fast := (2.5, 0) (5, 1);
 	END_FUZZIFY
 
 	DEFUZZIFY force
@@ -119,6 +137,14 @@ FUNCTION_BLOCK InvertedPendulum
 		RULE 40: IF (pa IS up) AND (pv IS cw_slow) THEN force IS right_slow;
 		RULE 41: IF (pa IS up) AND (pv IS cw_fast) THEN force IS right_fast;
 		RULE 42: IF (pa IS up) AND (pv IS stop) THEN force IS stop;
+
+		RULE 43: IF (cv IS left_fast) AND (pa IS up) THEN force IS right_fast;
+		RULE 44: IF (cv IS left_slow) AND (pa IS up) THEN force IS right_slow;
+
+		RULE 45: IF (cv IS right_fast) AND (pa IS up) THEN force IS left_fast;
+		RULE 46: IF (cv IS right_slow) AND (pa IS up) THEN force IS left_slow;
+
+		RULE 47: IF (cv IS stop) AND (pa IS up) THEN force IS stop;
 
 	END_RULEBLOCK
 
