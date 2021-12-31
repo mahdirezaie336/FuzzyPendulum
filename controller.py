@@ -7,6 +7,7 @@ from math import degrees
 # pyfuzzy imports
 from fuzzy.storage.fcl.Reader import Reader
 from utils import *
+import matplotlib.pyplot as plt
 
 
 class FuzzyController:
@@ -67,14 +68,17 @@ class FuzzyController:
 
     def defuzzify(self, fuzzy_result):
         result = {}
+        all_points = []
+        mixed_points = []
         for var in fuzzy_result:
             all_points = []
             for subset_name in get_subset_names(var):
                 subset_points = self.fuzzy_sets[var][subset_name]
                 max_value = fuzzy_result[var][subset_name]
-                all_points.extend(cut_points(subset_points, max_value))
-            all_points = mix_points(all_points)
-            result[var] = get_centroid(all_points)
+                c = cut_points(subset_points, max_value)
+                all_points.extend(c)
+            mixed_points = mix_points(all_points)
+            result[var] = get_centroid(mixed_points)
 
         return result
 

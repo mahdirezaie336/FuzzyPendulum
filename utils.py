@@ -108,7 +108,7 @@ def get_subset_names(var):
         'force': ['left_fast', 'left_slow', 'stop', 'right_slow', 'right_fast'],
         'cp': ['left_far', 'left_near', 'stop', 'right_near', 'right_far'],
         'cv': ['left_fast', 'left_slow', 'stop', 'right_slow', 'right_fast']
-        }
+    }
     return subsets[var]
 
 
@@ -169,9 +169,14 @@ def get_value_from_points(points, value):
 
 def mix_points(points):
     new_points = []
+    skip = False
     for i, point in enumerate(points):
         if i == 0 or i == len(points) - 1:
             new_points.append(point)
+            continue
+
+        if skip:
+            skip = False
             continue
 
         prev_point = points[i - 1]
@@ -180,9 +185,22 @@ def mix_points(points):
             a, b = get_line(prev_point, points[i - 2])
             c, d = get_line(point, points[i + 1])
             new_x = (d - b) / (a - c)
-            new_y = get_y_of(new_x, point, points[i + 1])
-            del new_points[-1]
-            new_points.append((new_x, new_y))
+            if points[i-2][0] <= new_x <= points[i+1][0]:
+                new_y = get_y_of(new_x, point, points[i + 1])
+                del new_points[-1]
+                new_points.append((new_x, new_y))
+            elif points[i-2][0] > new_x:
+                new_y = points[i-2][1]
+                new_x = get_x_of(new_y, point, points[i + 1])
+                del new_points[-1]
+                del new_points[-1]
+                new_points.append((new_x, new_y))
+            else:
+                new_y = points[i+1][1]
+                new_x = get_x_of(new_y, prev_point, points[i - 2])
+                del new_points[-1]
+                skip = True
+                new_points.append((new_x, new_y))
         else:
             new_points.append(point)
 
@@ -215,3 +233,25 @@ def cut_points(points, max_value):
             new_points.append(point)
 
     return new_points
+
+
+# import matplotlib.pyplot as plt
+#
+# p = [(-60, 0), (-27.716886072857925, 0.5380518987857013), (27.716886072857925, 0.5380518987857013), (60, 0),
+#      (0, 0), (25.71105024139539, 0.4285175040232565), (71.42964991953487, 0.4285175040232565), (80, 0),
+#      (60, 0), (69.23896202428597, 0.46194810121429875), (90.76103797571402, 0.46194810121429875), (100, 0)]
+# all_points = mix_points(p)
+# for i in all_points:
+#     print i
+# for i, point in enumerate(all_points):
+#     if i == 0:
+#         continue
+#     prev = all_points[i - 1]
+#     plt.plot([point[0], prev[0]], [point[1], prev[1]], 'ro-')
+# for i, point in enumerate(p):
+#     if i == 0:
+#         continue
+#     prev = p[i - 1]
+#     plt.plot([point[0], prev[0]], [point[1], prev[1]], 'bo-')
+#
+# plt.show()
