@@ -54,7 +54,7 @@ def read_rules():
 def load_fuzzy_sets():
     return {
         'pa': {
-            'up_more_right': [(0, 1), (30, 1), (60, 0)],
+            'up_more_right': [(0, 0), (30, 1), (60, 0)],
             'up_right': [(30, 0), (60, 1), (90, 0)],
             'up': [(60, 0), (90, 1), (120, 0)],
             'up_left': [(90, 0), (120, 1), (150, 0)],
@@ -233,25 +233,3 @@ def cut_points(points, max_value):
             new_points.append(point)
 
     return new_points
-
-
-# import matplotlib.pyplot as plt
-#
-# p = [(-60, 0), (-27.716886072857925, 0.5380518987857013), (27.716886072857925, 0.5380518987857013), (60, 0),
-#      (0, 0), (25.71105024139539, 0.4285175040232565), (71.42964991953487, 0.4285175040232565), (80, 0),
-#      (60, 0), (69.23896202428597, 0.46194810121429875), (90.76103797571402, 0.46194810121429875), (100, 0)]
-# all_points = mix_points(p)
-# for i in all_points:
-#     print i
-# for i, point in enumerate(all_points):
-#     if i == 0:
-#         continue
-#     prev = all_points[i - 1]
-#     plt.plot([point[0], prev[0]], [point[1], prev[1]], 'ro-')
-# for i, point in enumerate(p):
-#     if i == 0:
-#         continue
-#     prev = p[i - 1]
-#     plt.plot([point[0], prev[0]], [point[1], prev[1]], 'bo-')
-#
-# plt.show()

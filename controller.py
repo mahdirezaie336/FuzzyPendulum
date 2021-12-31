@@ -68,8 +68,6 @@ class FuzzyController:
 
     def defuzzify(self, fuzzy_result):
         result = {}
-        all_points = []
-        mixed_points = []
         for var in fuzzy_result:
             all_points = []
             for subset_name in get_subset_names(var):
@@ -90,8 +88,6 @@ class FuzzyController:
     def decide(self, world):
         # output = self._make_output()
         # self.system.calculate(self._make_input(world), output)
-        # print self._make_input(world)
-        # time.sleep(10)
         output = self.calculate(self._make_input(world))
-        return output['force']
+        return 2 * output['force']
 
