@@ -171,7 +171,7 @@ def normal(t, f):
     if t:
         return f * 1.7
     else:
-        return f * 2.1
+        return f * 2
 
 def mix_points(points):
     new_points = []
