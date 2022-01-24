@@ -28,6 +28,11 @@ class FuzzyController:
             force=0.
         )
 
+    def rule_check(self):
+        if len(self.rules) <= 43:
+            return True
+        return False
+
     def fuzzify(self, inputs):
         # Calculating membership of current pa value in the fuzzy sets defined for pa
         result = {}
@@ -76,6 +81,7 @@ class FuzzyController:
             mixed_points = mix_points(all_points)
             result[var] = get_centroid(mixed_points)
 
+        result['force'] = normal(self.rule_check(), result['force'])
         return result
 
     def calculate(self, inputs):
@@ -87,4 +93,4 @@ class FuzzyController:
         # output = self._make_output()
         # self.system.calculate(self._make_input(world), output)
         output = self.calculate(self._make_input(world))
-        return 2 * output['force']
+        return output['force']

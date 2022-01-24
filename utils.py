@@ -167,6 +167,12 @@ def get_value_from_points(points, value):
     return 0.0
 
 
+def normal(t, f):
+    if t:
+        return f * 1.7
+    else:
+        return f * 2.1
+
 def mix_points(points):
     new_points = []
     skip = False
@@ -233,3 +239,5 @@ def cut_points(points, max_value):
             new_points.append(point)
 
     return new_points
+
+
