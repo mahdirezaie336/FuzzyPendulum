@@ -3,6 +3,12 @@
 Basically, this project consists of an inverted pendulum simulator and a fuzzy controller. The main goal was to develop a simple yet useful simulator to model the environment, so that you are enabled to easily create a fuzzy controller for the inverted pendulum problem.
 It was implemented using **pygame** and **pyfuzzy** in *python2.7*.
 
+## Project Preview
+
+Here is a screenshot of the project environment:
+
+![screenshot](screenshots/main.gif)
+
 
 ## Getting Started
 
